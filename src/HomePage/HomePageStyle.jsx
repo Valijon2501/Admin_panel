@@ -1,5 +1,5 @@
 import styled from "styled-components";
-export const HomePegeStayle = styled.div`
+export const HomePageStyle = styled.div`
   table,
   th,
   td {
