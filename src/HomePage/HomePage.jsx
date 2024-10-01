@@ -5,15 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const HomePage = () => {
-  // const token = localStorage.getItem("tokenchik");
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (!token) {
-  //     navigate("/");
-  //   } else {
-  //     navigate("/home");
-  //   }
-  // });
+  
 
   // category get
   const [categ, setCateg] = useState();
@@ -28,6 +20,7 @@ const HomePage = () => {
 
   // modal function
   const [openModal, setOpenModal] = useState(false);
+  const [editOpenModal, setEditOpenModal] = useState(false);
 
   // category post
 
@@ -37,17 +30,17 @@ const HomePage = () => {
 
   const tokenxon = localStorage.getItem("tokenchik");
 
+  const formdata = new FormData();
+  formdata.append("name_en", nameEn);
+  formdata.append("name_ru", nameRu);
+  formdata.append("images", image);
   const categoryPost = (event) => {
-    const formdata = new FormData();
-    formdata.append("name_en", nameEn);
-    formdata.append("name_ru", nameRu);
-    formdata.append("images", image);
     event.preventDefault();
     fetch("https://autoapi.dezinfeksiyatashkent.uz/api/categories", {
       method: "Post",
       headers: {
         // "Content-type": "multipart/form-data",
-        Authorization: `Bearer ${tokenxon}`,
+       " Authorization": `Bearer ${tokenxon}`,
       },
       body: formdata,
     })
@@ -69,7 +62,7 @@ const HomePage = () => {
     fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/categories/${id}`, {
       method: "Delete",
       headers: {
-        Authorization: `Bearer ${tokenxon}`,
+        "Authorization": `Bearer ${tokenxon}`,
       },
     })
       .then((resp) => resp.json())
@@ -83,14 +76,43 @@ const HomePage = () => {
       });
   };
 
-  // put api 
-
-  
-
+  // put api
+  const modalOpenFunction = (id) => {
+    setEditOpenModal(!editOpenModal);
+    setOpenModal(false);
+    setIdClick(id);
+  };
+  const modalOpenFunctionAdd = () => {
+    setEditOpenModal(false);
+    setOpenModal(!openModal);
+  };
+  const [idClick, setIdClick] = useState();
+  // ////////////////////////////////
+  const editFunction = (e) => {
+    e.preventDefault()
+    fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/categories/${idClick}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${tokenxon}`,
+      },
+      body: formdata,
+    })
+      .then((responses) => responses.json())
+      .then((item) => {
+        if (item?.success) {
+          getCategory();
+          toast.success(item?.message);
+          setEditOpenModal(false);
+          setIdClick();
+        } else {
+          toast.error(item?.message);
+        }
+      });
+  };
   return (
     <>
       <HomePageStyle>
-        <button onClick={() => setOpenModal(!openModal)}>
+        <button onClick={modalOpenFunctionAdd}>
           {openModal ? "yopish" : " Qo'shish"}
         </button>
         {openModal && (
@@ -119,12 +141,40 @@ const HomePage = () => {
             </form>
           </div>
         )}
+        {editOpenModal && (
+          <div className="modal">
+            <h1>edit modal</h1>
+            <form>
+              <input
+                onChange={(e) => setNameEn(e?.target?.value)}
+                type="text"
+                placeholder="name en"
+                required
+              />
+              <input
+                onChange={(e) => setNameRu(e?.target?.value)}
+                type="text"
+                placeholder="name ru"
+                required
+              />
+              <input
+                // multiple
+                onChange={(e) => setImage(e?.target?.files[0])}
+                type="file"
+                required
+              />
+              <button onClick={editFunction}>edit add</button>
+            </form>
+          </div>
+        )}
+
         <table id="customers" className="customers">
           <tr>
             <th>name_en</th>
             <th>name_rus</th>
             <th>image</th>
             <th>delete</th>
+            <th>edit</th>
           </tr>
           {categ?.map((item, index) => (
             <tr key={index}>
@@ -138,6 +188,11 @@ const HomePage = () => {
               </td>
               <td>
                 <button onClick={() => deleteApi(item?.id)}>o'chirish</button>
+              </td>
+              <td>
+                <button onClick={(e) => modalOpenFunction(item?.id)}>
+                  Tahrirlash
+                </button>
               </td>
             </tr>
           ))}

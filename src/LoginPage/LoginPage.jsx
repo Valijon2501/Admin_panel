@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
 const LaginPage = () => {
   const [raqam, setRaqam] = useState();
   const [parol, setParol] = useState();
-  const navigate = useNavigate;
+  const navigate = useNavigate();
+  const token = localStorage.getItem("tokenchik");
+
+  useEffect(() => {
+    if (token) {
+      navigate("/home");
+    }
+  }, [token, navigate]);
+
   const loginSubmit = (event) => {
     event.preventDefault();
     fetch("https://autoapi.dezinfeksiyatashkent.uz/api/auth/signin", {
@@ -30,13 +39,16 @@ const LaginPage = () => {
         } else {
           toast.error(element?.message);
         }
+      })
+      .catch((error) => {
+        toast.error("Serverda xatolik yuz berdi");
       });
   };
 
   return (
     <>
       <h1>Login qilish</h1>
-      <form action="">
+      <form onSubmit={loginSubmit}>
         <input
           onChange={(e) => setRaqam(e?.target?.value)}
           type="text"
@@ -51,7 +63,7 @@ const LaginPage = () => {
           required
           minLength={3}
         />
-        <button onClick={loginSubmit}>login qilish</button>
+        <button type="submit">login qilish</button>
       </form>
       <ToastContainer />
     </>
