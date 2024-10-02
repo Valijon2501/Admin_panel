@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { HomePageStyle } from "../HomePage/HomePageStyle";
+import { IoPersonOutline } from "react-icons/io5";
+import { PiLockKeyLight } from "react-icons/pi";
 
 const LaginPage = () => {
   const [raqam, setRaqam] = useState();
@@ -47,25 +50,32 @@ const LaginPage = () => {
 
   return (
     <>
-      <h1>Login qilish</h1>
-      <form onSubmit={loginSubmit}>
-        <input
-          onChange={(e) => setRaqam(e?.target?.value)}
-          type="text"
-          placeholder="number"
-          required
-          minLength={3}
-        />
-        <input
-          onChange={(e) => setParol(e?.target?.value)}
-          type="text"
-          placeholder="password"
-          required
-          minLength={3}
-        />
-        <button type="submit">login qilish</button>
-      </form>
-      <ToastContainer />
+      <HomePageStyle>
+        <form onSubmit={loginSubmit} className="form_contaner">
+          <IoPersonOutline className="IoPersonOutline" />
+          <input
+            className="input_field"
+            onChange={(e) => setRaqam(e?.target?.value)}
+            type="text"
+            placeholder="Phone Number"
+            required
+            minLength={3}
+          />
+          <PiLockKeyLight className="PiLockKeyLight" />
+          <input
+            className="input_field"
+            onChange={(e) => setParol(e?.target?.value)}
+            type="password"
+            placeholder="password"
+            required
+            minLength={3}
+          />
+          <button className="submir_btn" type="submit">
+            Submit
+          </button>
+        </form>
+        <ToastContainer />
+      </HomePageStyle>
     </>
   );
 };

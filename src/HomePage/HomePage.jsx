@@ -3,27 +3,27 @@ import { HomePageStyle } from "./HomePageStyle";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { MdDeleteForever } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 
 const HomePage = () => {
-  
-
-  // category get
+  // ======================category get
   const [categ, setCateg] = useState();
   function getCategory() {
     fetch("https://autoapi.dezinfeksiyatashkent.uz/api/categories")
       .then((res) => res.json())
       .then((element) => setCateg(element?.data));
   }
+
   useEffect(() => {
     getCategory();
   }, []);
 
-  // modal function
+  //==================== modal function
   const [openModal, setOpenModal] = useState(false);
   const [editOpenModal, setEditOpenModal] = useState(false);
 
-  // category post
-
+  //=================== category post
   const [nameEn, setNameEn] = useState();
   const [nameRu, setNameRu] = useState();
   const [image, setImage] = useState();
@@ -37,10 +37,10 @@ const HomePage = () => {
   const categoryPost = (event) => {
     event.preventDefault();
     fetch("https://autoapi.dezinfeksiyatashkent.uz/api/categories", {
-      method: "Post",
+      method: "POST",
       headers: {
         // "Content-type": "multipart/form-data",
-       " Authorization": `Bearer ${tokenxon}`,
+        " Authorization": `Bearer ${tokenxon}`,
       },
       body: formdata,
     })
@@ -56,13 +56,13 @@ const HomePage = () => {
       });
   };
 
-  // delete api
+  //============================= delete api
 
   const deleteApi = (id) => {
     fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/categories/${id}`, {
-      method: "Delete",
+      method: "DELETE",
       headers: {
-        "Authorization": `Bearer ${tokenxon}`,
+        Authorization: `Bearer ${tokenxon}`,
       },
     })
       .then((resp) => resp.json())
@@ -76,7 +76,7 @@ const HomePage = () => {
       });
   };
 
-  // put api
+  //=================== put api
   const modalOpenFunction = (id) => {
     setEditOpenModal(!editOpenModal);
     setOpenModal(false);
@@ -89,11 +89,11 @@ const HomePage = () => {
   const [idClick, setIdClick] = useState();
   // ////////////////////////////////
   const editFunction = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     fetch(`https://autoapi.dezinfeksiyatashkent.uz/api/categories/${idClick}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${tokenxon}`,
+        Authorization: `Bearer ${tokenxon}`,
       },
       body: formdata,
     })
@@ -171,10 +171,13 @@ const HomePage = () => {
         <table id="customers" className="customers">
           <tr>
             <th>name_en</th>
-            <th>name_rus</th>
-            <th>image</th>
-            <th>delete</th>
-            <th>edit</th>
+            <th>name_ru</th>
+            <th>Image</th>
+            <th>
+              <div>
+                <p>Action</p>
+              </div>
+            </th>
           </tr>
           {categ?.map((item, index) => (
             <tr key={index}>
@@ -187,16 +190,28 @@ const HomePage = () => {
                 />
               </td>
               <td>
-                <button onClick={() => deleteApi(item?.id)}>o'chirish</button>
+                <span>
+                  <button
+                    className="btn"
+                    onClick={(e) => modalOpenFunction(item?.id)}
+                  >
+                    <FaEdit className="FaEdit" />
+                  </button>
+                </span>
+                <span>
+                  <button
+                    className="btn_to"
+                    onClick={() => deleteApi(item?.id)}
+                  >
+                    <MdDeleteForever className="MdDeleteForever" />
+                  </button>
+                </span>
               </td>
-              <td>
-                <button onClick={(e) => modalOpenFunction(item?.id)}>
-                  Tahrirlash
-                </button>
-              </td>
+              {/* <td></td> */}
             </tr>
           ))}
         </table>
+        <ToastContainer />
       </HomePageStyle>
     </>
   );
