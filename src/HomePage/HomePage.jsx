@@ -186,7 +186,7 @@ const HomePage = () => {
               <td>
                 <img
                   src={`https://autoapi.dezinfeksiyatashkent.uz/api/uploads/images/${item?.image_src}`}
-                  alt={"item?name_en"}
+                  alt={"item?.name_en"}
                 />
               </td>
               <td>
